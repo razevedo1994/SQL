@@ -63,3 +63,79 @@ Often, SQL users will question the differences between joins and subqueries. Aft
 **Output:**
 Both subqueries and joins are essentially bringing multiple tables together (whether an existing table is first manipulated or not) to generate a single output.
 
+# Subquery Basics
+
+### Fundamentals to Know about Subqueries:
+- Subqueries must be fully placed inside parentheses.
+- Subqueries must be fully independent and can be executed on their own
+- Subqueries have two components to consider:
+  - Where it’s placed
+  - Dependencies with the outer/larger query
+
+### A caveat with subqueries being independent:
+
+In almost all cases, subqueries are fully independent. They are "interim”/temp tables that can be fully executed on their own. However, there is an exception. When a subquery, typically in the form of a nested or inline subquery, is correlated to its outer query, it cannot run independently. This is most certainly an edge case since correlated subqueries are rarely implemented compared to standalone, simple subqueries.
+
+### Placement:
+There are four places where subqueries can be inserted within a larger query:
+
+- With
+- Nested
+- Inline
+- Scalar
+
+### Dependencies:
+A subquery can be dependent on the outer query or independent of the outer query.
+
+# Subqueries: Placement
+
+The key concept of placement is where exactly the subquery is placed within the context of the larger query. There are four different places where a subquery can be inserted. The decision of which placement to leverage stems from (1) the problem at hand and (2) the readability of the query.
+
+### Subquery Placement:
+**With**: This subquery is used when you’d like to “pseudo-create” a table from an existing table and **visually scope** the temporary table at the top of the larger query.
+```
+WITH subquery_name (column_name1, ...) AS
+ (SELECT ...)
+SELECT ...
+```
+
+**Nested**: This subquery is used when you’d like the temporary table to act as a filter within the larger query, which implies that it often sits within the **where clause**.
+```
+SELECT s.s_id, s.s_name, g.final_grade
+FROM student s, grades g
+WHERE s.s_id = g.s_id
+IN (SELECT final_grade
+    FROM grades g
+    WHERE final_grade >3.7
+   );
+
+```
+
+**Inline**: This subquery is used in the same fashion as the **WITH** use case above. However, instead of the temporary table sitting on top of the larger query, it’s embedded within the **from clause**.
+```
+SELECT student_name
+FROM
+  (SELECT student_id, student_name, grade
+   FROM student
+   WHERE teacher =10)
+WHERE grade >80;
+```
+
+**Scalar**: This subquery is used when you’d like to generate a scalar value to be used as a benchmark of some sort.
+```
+SELECT s.student_name
+  (SELECT AVG(final_score)
+   FROM grades g
+   WHERE g.student_id = s.student_id) AS
+     avg_score
+FROM student s;
+```
+
+For example, when you’d like to calculate the average salary across an entire organization to compare to individual employee salaries. Because it’s often a single value that is generated and used as a benchmark, the scalar subquery often sits within the select clause.
+
+### Advantages:
+**Readability**: With and Nested subqueries are most advantageous for readability.
+
+**Performance**: Scalar subqueries are advantageous for performance and are often used on smaller datasets.
+
+
