@@ -63,10 +63,3 @@ Often, SQL users will question the differences between joins and subqueries. Aft
 **Output:**
 Both subqueries and joins are essentially bringing multiple tables together (whether an existing table is first manipulated or not) to generate a single output.
 
-### Subquery vs Joins Overview
-
-|   **Components**  |   **Subquery**    |   **JOINS**|
-|   Combine data from multiple tables into a single result  | X |   X   |
-|   Create a flexible view of tables stitched together using a “key”    |   |   X |
-|   Build an output to use in a later part of the query |   X   |   |
-|   Subquery Plan: What happens under the hood  |   X   |   X   |
