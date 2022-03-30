@@ -161,3 +161,8 @@ ORDER BY a.total_brand_sales desc;
 
 ### CTE stands for Common Table Expression. A Common Table Expression in SQL allows you to define a temporary result, such as a table, to then be referenced in a later part of the query.
 
+<p align="center">
+  <img src="erd.png" >
+</p>
+
+
