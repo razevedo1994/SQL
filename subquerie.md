@@ -139,3 +139,25 @@ For example, when you’d like to calculate the average salary across an entire 
 **Performance**: Scalar subqueries are advantageous for performance and are often used on smaller datasets.
 
 
+# Placement: WITH
+
+### Use Case for With subquery:
+- When a user wants to create a version of an existing table to be used in a larger query (e.g., aggregate daily prices to an average price table).
+- It is advantageous for readability purposes.
+
+### Sample 'With' subquery
+
+```
+WITH average_price as
+( SELECT brand_id, AVG(product_price) as brand_avg_price
+  FROM product_records
+),
+SELECT a.brand_id, a.total_brand_sales, b.brand_avg_price
+FROM brand_table a
+JOIN average_price b
+ON b.brand_id = a.brand_id
+ORDER BY a.total_brand_sales desc;
+```
+
+### CTE stands for Common Table Expression. A Common Table Expression in SQL allows you to define a temporary result, such as a table, to then be referenced in a later part of the query.
+
