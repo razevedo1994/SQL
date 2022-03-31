@@ -286,4 +286,108 @@ SELECT AVG(avg_amt)
 FROM t2;
 ```
 
+# Placement: Nested
+
+### Use Case for a Nested Subquery
+- When a user wants to filter an output using a condition met from another table.
+- This type of placement also has advantages for making the code easy to read.
+
+### Example Nested Subquery
+```
+SELECT *
+FROM students
+WHERE student_id
+IN (SELECT DISTINCT student_id
+    FROM gpa_table
+    WHERE gpa>3.5
+    );
+```
+
+### Placement: Inline
+
+### Use Case for Inline Subquery
+
+- It is a very similar use case to ‘With’ subqueries.
+  -Inline subqueries create a “pseudo table” that aggregates or manipulates an existing table to be used in a larger query.
+- The disadvantage of the inline subquery is that it is not easy to read.
+
+### Example Inline Query
+```
+SELECT dept_name,
+       max_gpa
+FROM department_db x
+     (SELECT dept_id
+             MAX(gpa) as max_gpa
+      FROM students
+      GROUP BY dept_id
+      )y
+WHERE x.dept_id = y.dept_id
+ORDER BY dept_name;
+```
+
+### Placement: Scalar
+
+### Use Case for Scalar subquery placement
+
+- It selects only one column or expression and returns one row, used in the select clause of the main query
+- It has the advantage of performance or if the data set is small
+
+### Details:
+
+- If a scalar subquery does not find a match, it returns a NULL.
+- If a scalar subquery finds multiple matches, it returns an ERROR.
+
+### Example Scalar Query
+```
+SELECT 
+   (SELECT MAX(salary) FROM employees_db) AS top_salary,
+   employee_name
+FROM employees_db;
+```
+
+# Subqueries: Dependencies
+
+### Simple Subquery
+```
+WITH dept_average AS 
+  (SELECT dept, AVG(salary) AS avg_dept_salary
+   FROM employee
+   GROUP BY employee.dept
+  )
+SELECT E.eid, E.ename, D.avg_dept_salary
+FROM employee E
+JOIN dept.average D
+ON E.dept = D.dept
+WHERE E.salary > D.avg_dept_salary
+```
+
+### Correlated Subquery
+```
+SELECT employee_id,
+       name
+FROM employees_db emp
+WHERE salary > 
+      (SELECT AVG(salary)
+       FROM employees_db
+       WHERE department = emp.department
+      );
+```
+
+The second concept to consider before writing any code is the dependency of your subquery to the larger query. A subquery can either be simple or correlated. In my experience, it’s better to keep subqueries simple to increase readability for other users that might leverage your code to run or adjust.
+
+**Simple Subquery**: The inner subquery is completely independent of the larger query.
+
+**Correlated Subquery**: The inner subquery is dependent on the larger query.
+
+### When to use Correlated Query
+However, sometimes, it’s slick to include a correlated subquery, specifically when the value of the inner query is dependent on a value outputted from the main query (e.g., the filter statement constantly changes). In the example below, you’ll notice that the value of the inner query -- average GPA -- keeps adjusting depending on the university the student goes to. THAT is a great use case for the correlated subquery.
+
+```
+SELECT first_name, last_name, GPA, university
+ FROM student_db outer_db
+ WHERE GPA >
+                (SELECT AVG(GPA)
+                 FROM student_db
+                 WHERE university = outer_db.university);
+```
 
