@@ -16,3 +16,14 @@ Denormalized data exhibits many issues:
 - The inability to uniquely identify rows of data to target them for manipulation
 - Irrelevant dependencies, which cause repetitions and anomalies
 
+# First Normal Form
+
+Going from denormalized to First Normal Form — 1NF:
+
+- Make all values in a column consistently of the same data type
+- Make sure each cell contains only a single value
+- Make sure there are no repeating columns for the same data (e.g. category 1, 2, 3…)
+- Enable the rows of data to be uniquely identified through a column or combination of columns
+
+- `Candidate key`: a set of one or more columns that can uniquely identify a row in a table
+- `Primary key`: the key we choose from the candidate keys to uniquely represent a row in a table.
