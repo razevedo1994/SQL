@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS
   "comments",
   "votes";
 
--- a. Allow new users to register:
+-- a.
 CREATE TABLE "users"
 (
   id SERIAL PRIMARY KEY,
@@ -15,7 +15,7 @@ CREATE TABLE "users"
   CONSTRAINT "non_empty_username" CHECK (LENGTH(TRIM("username")) > 0)
 );
 
--- b. Allow registered users to create new topics:
+-- b.
 CREATE TABLE "topics"
 (
   id SERIAL PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE "topics"
   CONSTRAINT "non_empty_topic_name" CHECK (LENGTH(TRIM("name")) > 0)
 );
 
--- c. Allow registered users to create new posts on existing topics:
+-- c.
 CREATE TABLE "posts"
 (
   id SERIAL PRIMARY KEY,
@@ -43,7 +43,7 @@ CREATE TABLE "posts"
 );
 CREATE INDEX ON "posts" ("url" VARCHAR_PATTERN_OPS);
 
--- d. Allow registered users to comment on existing posts:
+-- d.
 CREATE TABLE "comments"
 (
   id SERIAL PRIMARY KEY,
@@ -55,7 +55,7 @@ CREATE TABLE "comments"
   CONSTRAINT "non_empty_text_content" CHECK(LENGTH(TRIM("text_content")) > 0)
 );
 
--- e. Make sure that a given user can only vote once on a given post:
+-- e.
 CREATE TABLE "votes"
 (
   id SERIAL PRIMARY KEY,
@@ -66,7 +66,7 @@ CREATE TABLE "votes"
   CONSTRAINT "one_vote_per_user" UNIQUE (user_id, post_id)
 );
 
--- 3
+
 INSERT INTO "users"("username")
   SELECT DISTINCT username
   FROM bad_posts
@@ -138,8 +138,18 @@ INSERT INTO "votes"
   "vote"
 )
 
-SELECT t1.id, users.id,
--1 AS vote_down
-FROM (SELECT id, REGEXP_SPLIT_TO_TABLE(downvotes,',')
-  AS downvote_users FROM bad_posts) t1
-JOIN users ON users.username=t1.downvote_users;
+SELECT
+	t1.id,
+	users.id,
+	-1 AS vote_down
+FROM
+	(
+	SELECT
+		id,
+		REGEXP_SPLIT_TO_TABLE(downvotes,
+		',')
+  AS downvote_users
+	FROM
+		bad_posts) t1
+JOIN users ON
+	users.username = t1.downvote_users;
