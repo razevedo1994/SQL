@@ -1,10 +1,3 @@
-DROP TABLE IF EXISTS
-  "users",
-  "topics",
-  "posts",
-  "comments",
-  "votes";
-
 -- a.
 CREATE TABLE "users"
 (
