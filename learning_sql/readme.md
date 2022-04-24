@@ -1,0 +1,1 @@
+# Exercises of book [Learning SQL](https://amzn.to/3MsQxwI)
