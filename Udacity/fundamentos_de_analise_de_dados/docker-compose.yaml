@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: parch_and_posey
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./db:/var/lib/postgressql/data/"
+    restart: always
